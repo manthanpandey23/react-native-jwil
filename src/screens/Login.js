@@ -59,7 +59,7 @@ return (
                 style={{ alignSelf: "center", backgroundColor:'#185ADB' }}
                 onPress={onLogin}
               >
-                  <Text>{loggedIn ? navigation.navigate('API') || 'You already logged in' : 'Login with Office 365'}</Text>
+                  <Text>{loggedIn ? navigation.navigate('ComSelection') || 'You already logged in' : 'Login with Office 365'}</Text>
               </Button>                           
             </ImageBackground>
       </View>  
