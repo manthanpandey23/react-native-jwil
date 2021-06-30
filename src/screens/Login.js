@@ -15,7 +15,7 @@ var message= "";
 const LoginScreen = ({ navigation }) => {  
   const [loginData, setLoginData] = useState({accessToken: null, user: '', userId: '', mail: '', message:'', status: 'false'});
 
-  const onLogin = async () => {
+   async function onLogin () {
     try {
       let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read' })
       //console.log('CRED>>>', tokens)
@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-const onLogout = () => {
+ async function onLogout () {
   azureAuth.webAuth
     .clearSession()
     .then(success => {
@@ -40,11 +40,11 @@ const onLogout = () => {
 let loggedIn = loginData.status  ? true : false;   
 
 return (      
-      <View style={{flex:1, flexDirection:"column", justifyContent:'center'}}>      
-            <ImageBackground
+      <View style={{flex:1, flexDirection:"column", backgroundColor:'#fff'}}>      
+            {/* <ImageBackground
               source={require("../assets/images/loginBack.jpg")}
               style={{ flex: 1, resizeMode: 'cover' }}
-            >
+            > */}
               <Image
                   style={{
                   resizeMode: "center",
@@ -61,7 +61,7 @@ return (
               >
                   <Text>{loggedIn ? navigation.navigate('ComSelection') || 'You already logged in' : 'Login with Office 365'}</Text>
               </Button>                           
-            </ImageBackground>
+            {/* </ImageBackground> */}
       </View>  
   );
 }

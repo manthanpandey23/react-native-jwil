@@ -3,6 +3,7 @@ import { Container, Content } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {Button, Text} from '@shoutem/ui';
 import NewCard from '../components/NewCard';
+import ActivityAPI from '../api/activityAPI';
 
 const images = {
   Activity: require('../assets/images/activity.jpg'),
@@ -18,19 +19,25 @@ const DashboardScreen = ({ navigation }) => {
             <Grid>
                 <Col style={{margin:20}}>
                   <Button onPress={() => navigation.navigate('Activity')}>
-                    <NewCard title="Activities"  subtitle="50" link={images.Activity}  />
+                    <NewCard title="Activities"  subtitle={ActivityAPI()} link={images.Activity}  />
                   </Button>
-                </Col>               
-                <Col style={{margin:20}}>
-                    <NewCard title="Messages" subtitle="01" link={images.Message} />
-                </Col>           
+                </Col>                           
+                  <Col style={{margin:20}}>
+                    <Button onPress={() => navigation.navigate('Activity')}>   
+                      <NewCard title="Messages" subtitle="01" link={images.Message} />
+                    </Button>  
+                  </Col>                          
             </Grid>
             <Grid>
                 <Col style={{margin:20}}>
-                  <NewCard title="Notifications" subtitle="50" link={images.Notification} />
+                  <Button onPress={() => navigation.navigate('Activity')}>
+                    <NewCard title="Notifications" subtitle="50" link={images.Notification} />
+                  </Button>
                 </Col>
                 <Col style={{margin:20}}>
-                  <NewCard title="Documents" subtitle="$" link={images.Document}  />
+                  <Button onPress={() => navigation.navigate('Activity')}>
+                    <NewCard title="Documents" subtitle="$" link={images.Document}  />
+                  </Button>
                 </Col>           
             </Grid>          
           </Content>

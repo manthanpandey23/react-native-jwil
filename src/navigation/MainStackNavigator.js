@@ -10,9 +10,10 @@ import LoginScreen from '../screens/Login';
 import DashboardScreen from '../screens/Dashboard';
 import ApprovalScreen from '../screens/Approval';
 import APIScreen from '../screens/API';
+import PostApprovalScreen from '../screens/PostApproval';
 
 //Constants
-import {loginStyle, comSelectionStyle, DashboardStyle, ActivityStyle, ApprovalStyle, APIStyle} from '../constants/Style';
+import {loginStyle, comSelectionStyle, DashboardStyle, ActivityStyle, ApprovalStyle, APIStyle, PostApprovalStyle} from '../constants/Style';
 
 const Stack = createStackNavigator();
 
@@ -43,12 +44,17 @@ function MainStackNavigator() {
          <Stack.Screen 
             name="Approval"                  
             component={ApprovalScreen}
-            options={() => (ApprovalStyle)}                  
+            options={(item) => (ApprovalStyle)}                  
         />
          <Stack.Screen 
             name="API"                  
             component={APIScreen}
             options={() => (APIStyle)}                  
+        />
+        <Stack.Screen 
+            name="PostApprove"                  
+            component={PostApprovalScreen}
+            options={() => (PostApprovalStyle)}                  
         />
         </Stack.Navigator>
       </NavigationContainer>   

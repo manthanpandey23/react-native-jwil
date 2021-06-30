@@ -3,7 +3,7 @@ import React from 'react';
 const getLoginDetails = async (token, mail, name) => {
     
     try {
-      let response = await fetch('https://neptuneapi.azurewebsites.net/swagger/api/security/auth/get/token', {
+      let response = await fetch('https://jwilapi-devnet5.azurewebsites.net/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

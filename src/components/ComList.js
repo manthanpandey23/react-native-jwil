@@ -11,7 +11,7 @@ const ComListComponent = (props) => {
               </Left>
               <Body>
                 <Text>{props.name}</Text>
-                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                <Text note numberOfLines={1}>{props.desc}</Text>
               </Body>
               <Right>
                 <Button transparent onPress={() => navigation.navigate('Dashboard')}>

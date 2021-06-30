@@ -7,8 +7,8 @@ const ActListComponent = (props) => {
     return  (
          <ListItem thumbnail>              
               <Body>
-                <Text> <Text style={{fontWeight: "bold"}}>Project Name: </Text>{props.name}</Text>
-                <Text> <Text style={{fontWeight: "bold"}}>Submodule Name: </Text>{props.subname}</Text>
+                <Text> <Text style={{fontWeight: "bold"}}>Project Name: </Text>{props.module}</Text>
+                <Text> <Text style={{fontWeight: "bold"}}>Submodule Name: </Text>{props.submodule}</Text>
                 <Text> <Text style={{fontWeight: "bold"}}>Date: </Text>{props.date} </Text>
                 <Text> <Text style={{fontWeight: "bold"}}>Status: </Text><Text style={{color:'green', fontWeight: "bold"}}> {props.status} </Text></Text>
               </Body>             
