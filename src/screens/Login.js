@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {Image, View, ImageBackground} from 'react-native';
+import {Image, View} from 'react-native';
 import {Button, Text} from '@shoutem/ui';
 import AzureAuth from 'react-native-azure-auth';
-import Client from 'react-native-azure-auth/src/networking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CLIENT_ID = 'c1e6d7cd-21c4-40f7-8c99-75a6be63c782' 
 
@@ -10,41 +10,59 @@ const azureAuth = new AzureAuth({
     clientId: CLIENT_ID
   });
 
-var message= ""; 
-
 const LoginScreen = ({ navigation }) => {  
-  const [loginData, setLoginData] = useState({accessToken: null, user: '', userId: '', mail: '', message:'', status: 'false'});
+  const [loginData, setLoginData] = useState({accessToken: null, user: '', mail: ''});
 
-   async function onLogin () {
-    try {
-      let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read' })
-      //console.log('CRED>>>', tokens)
-      setLoginData({ accessToken: tokens.accessToken });
-      let info = await azureAuth.auth.msGraphRequest({token: tokens.accessToken, path: 'me'})
-      //console.log('info', info)
-      setLoginData({ user: info.displayName, userId: tokens.userId, mail: info.mail, status: 'true' })
-    } catch (error) {
-      //console.log('Error during Azure operation', error)
-    }
-  };
+   const onLogin = async () => {     
+      let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read Mail.Read' })
+      setLoginData({ accessToken: tokens.accessToken, user: tokens.userName, mail: tokens.userId })
+      .then(() => getToken())
+      .then(() => console.log(loginData))
+      .catch((error) => console.log(error));      
+   };
 
- async function onLogout () {
-  azureAuth.webAuth
-    .clearSession()
+  const getToken =  () => {
+      fetch('https://jwilapi-devnet5.azurewebsites.net/api/security/auth/get/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              "token": loginData.accessToken,
+              "refreshToken": "",
+              "tokenType": "Office365",
+              "emailId": loginData.mail,
+              "companyId": 0,
+              "name": loginData.user
+          })
+      })
+      .then((response) => response.json())
+      .then((json) => {
+        AsyncStorage.setItem('token', json.token);
+        AsyncStorage.setItem('mail', loginData.mail); 
+        AsyncStorage.setItem('status', loginData.isSuccess); 
+        console.log(json);       
+      })
+      .catch((error) => { 
+        console.log("Error in JWIL Token", error.message);
+      });
+  }
+
+ const onLogout = () => {
+  azureAuth.webAuth.clearSession()
     .then(success => {
       setLoginData({ accessToken: null, user: null });
+      AsyncStorage.setItem('token', null);
+      AsyncStorage.setItem('mail', null);
     })
-    .catch(error => console.log(error));
+    .catch(error => {
+      setLoginData({status:false});
+      console.log("Error in Logout", error.message);
+    });
 };
 
-let loggedIn = loginData.status  ? true : false;   
-
-return (      
-      <View style={{flex:1, flexDirection:"column", backgroundColor:'#fff'}}>      
-            {/* <ImageBackground
-              source={require("../assets/images/loginBack.jpg")}
-              style={{ flex: 1, resizeMode: 'cover' }}
-            > */}
+const status = AsyncStorage.getItem('status');
+return ( <View style={{flex:1, flexDirection:"column", backgroundColor:'#fff'}}> 
               <Image
                   style={{
                   resizeMode: "center",
@@ -57,13 +75,10 @@ return (
               <Button 
                 styleName="secondary" 
                 style={{ alignSelf: "center", backgroundColor:'#185ADB' }}
-                onPress={onLogin}
-              >
-                  <Text>{loggedIn ? navigation.navigate('ComSelection') || 'You already logged in' : 'Login with Office 365'}</Text>
-              </Button>                           
-            {/* </ImageBackground> */}
-      </View>  
-  );
+                onPress={onLogin}>
+                <Text>{status == true ? navigation.navigate('ComSelection')  : 'Login with Office 365'}</Text>             
+              </Button> 
+      </View> );
 }
 
 export default LoginScreen;

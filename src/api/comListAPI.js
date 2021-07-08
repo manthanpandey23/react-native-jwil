@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '../../env.json';
 
-const BASE_URL='https://jwilapi-devnet5.azurewebsites.net/';
-
-const ComListAPI = () => {
+const ComListAPI =  () => {
   const [data, setData] = useState([]);
-
-  useEffect(() => {
-    fetch(BASE_URL+'/api/core/admin/master/company/list', {
+  const mail =  AsyncStorage.getItem('mail');
+  const token =  AsyncStorage.getItem('token');
+  fetch(API_URL+'api/me/profile/usercompanies?email='+mail, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
-          }})
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => console.error(error));
-  }, []);
-
-  return (data);
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            }          
+          })
+  .then((response) => response.json())
+  .then((json) => setData(json))
+  .catch((error) => console.log(error.message));  
+  if (data){
+    return data;
+  } else {
+    return false;
+  }
+  
 }
 
 export default ComListAPI;

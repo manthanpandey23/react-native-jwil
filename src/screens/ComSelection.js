@@ -1,14 +1,14 @@
 import React from 'react';
-import { Container, Header, Content, List, ListItem, Thumbnail, Text, Left, Body, Right, Button } from 'native-base';
-import ComListComponent from '../components/ComList';
+import { Container, Content, List, ListItem} from 'native-base';
 import ComListAPI from '../api/comListAPI.js';
+import AzureAuth from 'react-native-azure-auth';
 
 const ComSelectionScreen = ({navigation}) => {
     return (
       <Container>       
         <Content>
-          <List>
-            {ComListAPI().map((item, i) => <ComListComponent name={item.name} desc={item.description} key={item.companyId}/> )}
+          <List style={{paddingVertical:30}}>
+            { ComListAPI().map((item, i) => <ComListComponent name={item.name} key={item.companyId}/>) }
           </List>
         </Content>
       </Container>

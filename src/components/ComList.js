@@ -10,8 +10,8 @@ const ComListComponent = (props) => {
                 <Thumbnail square source={require("../assets/images/logo.png")} />
               </Left>
               <Body>
-                <Text>{props.name}</Text>
-                <Text note numberOfLines={1}>{props.desc}</Text>
+               
+                <Text>{props.name}</Text>                  
               </Body>
               <Right>
                 <Button transparent onPress={() => navigation.navigate('Dashboard')}>

@@ -16,6 +16,8 @@ target 'commHub' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'RNInAppBrowser', :path => '../node_modules/react-native-inappbrowser-reborn'
+
   target 'commHubTests' do
     inherit! :complete
     # Pods for testing

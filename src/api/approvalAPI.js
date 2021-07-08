@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-
-const BASE_URL='https://jwilapi-devnet5.azurewebsites.net/';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '../../env.json';
 
 const ApprovalAPI = (id, status, remark) => {
   const [data, setData] = useState([]);
-
-  useEffect(() => {
-    fetch(BASE_URL+'/api/WorkflowProcess/PerformAction', {
+  const token = AsyncStorage.getItem('token');
+  fetch(API_URL+'/api/WorkflowProcess/PerformAction', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
           },
           body: {
               "actionId": id,
@@ -17,12 +17,10 @@ const ApprovalAPI = (id, status, remark) => {
               "actionRemarks": remark
           }
           })
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => console.error(error));
-  }, []);
-
-  return (data);
+  .then((response) => response.json())
+  .then((json) => setData(json))
+  .catch((error) => console.log(error.message));
+  return data;
 }
 
 export default ApprovalAPI;

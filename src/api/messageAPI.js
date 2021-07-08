@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '../../env.json';
 
-const ActivityAPI = () => {
+const MessageAPI = () => {
   const [data, setData] = useState([]);
   const token = AsyncStorage.getItem('token');
-
- fetch(API_URL+'api/CommunicationHubActionCenter/getUsersPendingActions', {
+  fetch(API_URL+'api/Message/get', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token,
-            }          
+            }        
           })
   .then((response) => response.json())
   .then((json) => setData(json))
@@ -19,4 +18,4 @@ const ActivityAPI = () => {
   return data;
 }
 
-export default ActivityAPI;
+export default MessageAPI;
