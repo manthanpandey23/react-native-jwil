@@ -19,6 +19,7 @@ import ABPScreen from '../screens/ABP';
 import BidPlanActScreen from '../screens/BidPlanAct';
 import TenderBasicScreen from '../screens/TenderBasic';
 import LeadScreen from '../screens/Lead';
+import BrowserScreen from '../screens/Browser';
 
 //Constants
 import { HeaderStyle } from '../constants/Style';
@@ -93,6 +94,11 @@ function MainStackNavigator() {
                 name="AllLead"                  
                 component={LeadScreen}
                 options={() => (HeaderStyle("All Lead Details"))}                  
+            />
+             <Stack.Screen 
+                name="Browser"                  
+                component={BrowserScreen}
+                options={() => (HeaderStyle("App Browser"))}                  
             />
         </Stack.Navigator>
       </NavigationContainer>   

@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
-import {Image, View} from 'react-native';
-import {Button, Text} from '@shoutem/ui';
+import React, {useState, useRef} from 'react';
+import {Image, View, ImageBackground, Button, Text} from 'react-native';
 import AzureAuth from 'react-native-azure-auth';
+import Client from 'react-native-azure-auth/src/networking';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const CLIENT_ID = 'c1e6d7cd-21c4-40f7-8c99-75a6be63c782' 
 
@@ -11,18 +12,19 @@ const azureAuth = new AzureAuth({
   });
 
 const LoginScreen = ({ navigation }) => {  
-  const [loginData, setLoginData] = useState({accessToken: null, user: '', mail: ''});
+  const [loginData, setLoginData] = useState({accessToken: null, user: '', mail: '', status: false});
+  const [jToken, setjToken] = useState([]);
+  const refRBSheet = useRef();
 
-   const onLogin = async () => {     
-      let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read Mail.Read' })
-      setLoginData({ accessToken: tokens.accessToken, user: tokens.userName, mail: tokens.userId })
-      .then(() => getToken())
-      .then(() => console.log(loginData))
-      .catch((error) => console.log(error));      
-   };
+   const onLogin = () => {     
+      let tokens = azureAuth.webAuth.authorize({scope: 'openid profile User.Read' })
+      setLoginData({ accessToken: tokens.accessToken, user: tokens.userName, mail: tokens.userId });
+      console.log(loginData);
+      //getToken();
+   }
 
-  const getToken =  () => {
-      fetch('https://jwilapi-devnet5.azurewebsites.net/api/security/auth/get/token', {
+  const getToken = () => {
+       fetch ('https://jwilapi-devnet5.azurewebsites.net/api/security/auth/get/token', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -37,21 +39,20 @@ const LoginScreen = ({ navigation }) => {
           })
       })
       .then((response) => response.json())
-      .then((json) => {
+      .then((json) => setjToken(json))
+      .catch((error) => console.log("Error in JWIL Token", error.message));
+      if (jToken) {
         AsyncStorage.setItem('token', json.token);
-        AsyncStorage.setItem('mail', loginData.mail); 
-        AsyncStorage.setItem('status', loginData.isSuccess); 
-        console.log(json);       
-      })
-      .catch((error) => { 
-        console.log("Error in JWIL Token", error.message);
-      });
+        AsyncStorage.setItem('mail', loginData.mail);
+        console.log(jToken);
+        setLoginData({status: true});
+      }         
   }
 
  const onLogout = () => {
   azureAuth.webAuth.clearSession()
     .then(success => {
-      setLoginData({ accessToken: null, user: null });
+      setLoginData({ accessToken: null, user: null, status: false });
       AsyncStorage.setItem('token', null);
       AsyncStorage.setItem('mail', null);
     })
@@ -61,24 +62,47 @@ const LoginScreen = ({ navigation }) => {
     });
 };
 
-const status = AsyncStorage.getItem('status');
-return ( <View style={{flex:1, flexDirection:"column", backgroundColor:'#fff'}}> 
-              <Image
-                  style={{
-                  resizeMode: "center",
-                  height: 100,
-                  width: 200,                
-                  margin: 100
-                  }}
-                  source={require("../assets/images/logo.png")}
-              />
-              <Button 
-                styleName="secondary" 
-                style={{ alignSelf: "center", backgroundColor:'#185ADB' }}
-                onPress={onLogin}>
-                <Text>{status == true ? navigation.navigate('ComSelection')  : 'Login with Office 365'}</Text>             
-              </Button> 
-      </View> );
+let loggedIn = loginData.status  ? true : false;   
+
+return (      
+      <View style={{flex:1, flexDirection:"column", backgroundColor:'#fff'}}> 
+        <ImageBackground source={require('../assets/images/2.png')} resizeMode="cover" style={{flex: 1, justifyContent: "center"}} />              
+               <Button title="Silde up for Login" onPress={() => refRBSheet.current.open()} />
+                  <RBSheet
+                      ref={refRBSheet}
+                      closeOnDragDown={true}
+                      closeOnPressMask={false}
+                      height={300}
+                      customStyles={{
+                        wrapper: {
+                          backgroundColor: "transparent",
+                        },
+                        container: {
+                           borderWidth: 5,
+                          borderTopLeftRadius: 20,
+                          borderTopRightRadius: 20
+                        }
+                      }}
+                    >
+                    <View style={{justifyContent:'space-between', alignItems:'center', flex:1}}>
+                      <Text style={{fontSize:30, fontWeight:'bold', color:'#1CC5DC'}}>Login</Text>
+                        <View style={{alignItems:'center', flex:1, margin:20}}>
+                        <Button 
+                            title='Continue with O365'
+                            onPress={onLogin}
+                            color='#DC3E15'
+                            style={{borderWidth: 5, borderTopLeftRadius: 20, borderTopRightRadius: 20}}                            
+                          />
+                          <View style={{margin:20, alignItems:'center'}}>
+                              <Text>Use your existing Office 365</Text>
+                              <Text>Login ID to continue</Text>
+                          </View>
+                          
+                          </View>
+                      </View>
+                  </RBSheet>              
+        </View>  
+  );
 }
 
 export default LoginScreen;

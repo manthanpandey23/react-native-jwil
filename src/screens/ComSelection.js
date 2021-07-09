@@ -8,7 +8,7 @@ const ComSelectionScreen = ({navigation}) => {
       <Container>       
         <Content>
           <List style={{paddingVertical:30}}>
-            { ComListAPI().map((item, i) => <ComListComponent name={item.name} key={item.companyId}/>) }
+            { ComListAPI() ? ComListAPI().map((item, i) => <ComListComponent name={item.name} key={item.companyId}/>) : 'Loading' }
           </List>
         </Content>
       </Container>
